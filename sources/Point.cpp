@@ -12,16 +12,27 @@ namespace ariel
         double dy = y - other.y;
         return sqrt(dx * dx + dy * dy);
     }
-    Point Point::moveTowards(const Point &src, const Point &dest, double dist) const
+    Point Point::moveTowards(const Point &src, const Point &dest, double dist)
     {
-        double d = src.distance(dest);
-        if (d == 0)
+        if (dist < 0)
         {
-            return src;
+            throw std::invalid_argument("Distance cannot be negative!");
         }
-        double ratio = dist / d;
-        double newX = src.getX() + (dest.getX() - src.getX()) * ratio;
-        double newY = src.getY() + (dest.getY() - src.getY()) * ratio;
+        double totalDist = src.distance(dest);
+        if (totalDist <= dist)
+        {
+            return dest;
+        }
+
+        double ratio = dist / totalDist;
+        double newX = src.x + ratio * (dest.x - src.x);
+        double newY = src.y + ratio * (dest.y - src.y);
+
         return Point(newX, newY);
+    }
+    std::ostream &operator<<(std::ostream &os, const Point &point)
+    {
+        os << "(" << point.x << "," << point.y << ")";
+        return os;
     }
 }

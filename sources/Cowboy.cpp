@@ -1,42 +1,61 @@
 #include "Cowboy.hpp"
-
-
+#define COWBOY_HARM 10
 namespace ariel
 {
-    Cowboy::Cowboy(std::string name, Point location) : Character(name, location, 100, 100, 11), bullets(6) {}
-    std::string Cowboy::Print() const
-    {
-        std::stringstream ss;
-        ss << getName() << " (Cowboy) is at (" << getLocation().getX() << "," << getLocation().getY() << ") with " << health << " health and " << bullets << " bullets.";
-        return ss.str();
-    }
+    Cowboy::Cowboy(std::string name, Point location) : Character(name, location, 110), bullets(6) {}
+
     void Cowboy::shoot(Character *target)
     {
+        if (!this->isAlive())
+        {
+            throw std::runtime_error("Dead characters can't attack!");
+        }
+        if (!target->isAlive())
+        {
+            throw std::runtime_error("Can't attack a dead character!");
+        }
+        if (target == this)
+        {
+            throw std::runtime_error("One cannot harm himself!");
+        }
+
         if (bullets <= 0)
         {
-            std::cout << getName() << " is out of bullets!" << std::endl;
+            if(DEBUG)std::cout << getName() << " is out of bullets!" << std::endl;
         }
         else
         {
             double dist = location.distance(target->getLocation());
             if (dist <= 10)
             {
-                std::cout << getName() << " shoots " << target->getName() << " and deals " << attackPoints << " damage!" << std::endl;
-                target->hit(attackPoints);
+                if(DEBUG)std::cout << getName() << " shoots " << target->getName() << " and deals " << COWBOY_HARM << " damage!" << std::endl;
+                target->hit(COWBOY_HARM);
             }
             else
             {
-                std::cout << getName() << " tries to shoot " << target->getName() << ", but is too far away!" << std::endl;
+                if(DEBUG)std::cout << getName() << " tries to shoot " << target->getName() << ", but is too far away!" << std::endl;
             }
             bullets--;
         }
     }
-    bool Cowboy::has_bullets() const
+    bool Cowboy::hasboolets() const
     {
         return bullets > 0;
     }
     void Cowboy::reload()
     {
+        if (!isAlive())
+        {
+            throw std::runtime_error("Dead cowboy...");
+        }
+
         bullets = 6;
     }
+    std::string Cowboy::print() const
+    {
+        std::ostringstream oss;
+        oss << "C " << Character::print();
+        return oss.str();
+    }
+
 }

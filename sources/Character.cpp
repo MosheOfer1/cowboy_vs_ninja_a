@@ -2,18 +2,32 @@
 
 namespace ariel
 {
-    Character::Character(std::string name, Point location, int health, int maxHealth, int attackPoints)
-        : name(name), location(location), health(health), maxHealth(maxHealth), attackPoints(attackPoints) {}
+    Character::Character(std::string name, Point location, int attackPoints)
+        : name(name), location(location), attackPoints(attackPoints) {}
     std::string Character::getName() const { return name; }
     Point Character::getLocation() const { return location; }
-    bool Character::isAlive() const { return health > 0; }
+    int Character::getAttackPoints() const { return attackPoints; }
+    bool Character::isAlive() const { return attackPoints > 0; }
     double Character::distance(Character *other) const { return location.distance(other->getLocation()); }
     void Character::hit(int harm)
     {
-        health -= harm;
-        if (health < 0)
+        attackPoints -= harm;
+        if (attackPoints < 0)
         {
-            health = 0;
+            attackPoints = 0;
         }
+    }
+    std::string Character::print() const
+    {
+        std::ostringstream oss;
+        if (!isAlive())
+        {
+            oss << "(" << name << ")" << std::endl;
+        }
+        else
+        {
+            oss << name << " " << attackPoints << " " << location << std::endl;
+        }
+        return oss.str();
     }
 }

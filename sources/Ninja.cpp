@@ -1,36 +1,46 @@
 #include "Ninja.hpp"
+#define NINJA_HARM 31
 
 namespace ariel
 {
-    Ninja::Ninja(std::string name, Point position, int health, int maxHealth, int attackPoints)
-        : Character(name, position, health, maxHealth, attackPoints), speed(10) {}
-
-    std::string Ninja::Print() const
+    std::string Ninja::print() const
     {
-        std::stringstream ss;
-        ss << getName() << " (Ninja) is at (" << getLocation().getX() << "," << getLocation().getY() << ") with " << health << " health and speed of " << speed << ".";
-        return ss.str();
+        std::ostringstream oss;
+        oss << "N " << Character::print();
+        return oss.str();
     }
 
     void Ninja::move(Character *target)
     {
         Point dest = target->getLocation();
         Point newLocation = getLocation().moveTowards(getLocation(), dest, speed);
-        std::cout << getName() << " moves from (" << getLocation().getX() << "," << getLocation().getY() << ") to (" << newLocation.getX() << "," << newLocation.getY() << ")!" << std::endl;
+        if(DEBUG)std::cout << getName() << " moves from (" << getLocation().getX() << "," << getLocation().getY() << ") to (" << newLocation.getX() << "," << newLocation.getY() << ")!" << std::endl;
         location = newLocation;
     }
 
     void Ninja::slash(Character *target)
     {
-        double dist = location.distance(target->getLocation());
-        if (dist <= 2)
+        if (!this->isAlive())
         {
-            std::cout << getName() << " slashes " << target->getName() << " and deals " << attackPoints << " damage!" << std::endl;
-            target->hit(attackPoints);
+            throw std::runtime_error("Dead characters can't attack!");
+        }
+        if (!target->isAlive())
+        {
+            throw std::runtime_error("Can't attack a dead character!");
+        }
+        if (target == this)
+        {
+            throw std::runtime_error("One cannot harm himself!");
+        }
+        double dist = location.distance(target->getLocation());
+        if (dist <= 1)
+        {
+            if(DEBUG)std::cout << getName() << " slashes " << target->getName() << " and deals " << NINJA_HARM << " damage!" << std::endl;
+            target->hit(NINJA_HARM);
         }
         else
         {
-            std::cout << getName() << " tries to slash " << target->getName() << ", but is too far away!" << std::endl;
+            if(DEBUG)std::cout << getName() << " tries to slash " << target->getName() << ", but is too far away!" << std::endl;
         }
     }
 }

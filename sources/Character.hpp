@@ -6,7 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include "Point.hpp"
-
+#define DEBUG 0
 namespace ariel
 {
     class Character
@@ -14,19 +14,20 @@ namespace ariel
     protected:
         std::string name;
         Point location;
-        int health;
-        int maxHealth;
         int attackPoints;
-
+        bool inTeam = false;
     public:
-        Character(std::string name, Point location, int health, int maxHealth, int attackPoints);
+        Character(std::string name, Point location, int attackPoints);
         virtual ~Character() = default;
         std::string getName() const;
         Point getLocation() const;
+        int getAttackPoints() const;
         bool isAlive() const;
         double distance(Character *other) const;
         void hit(int harm);
-        virtual std::string Print() const = 0;
+        virtual std::string print() const;
+        bool isInTeam() const { return inTeam; }
+        void setInTeam(bool inTeam) { this->inTeam = inTeam; }
     };
 }
 
